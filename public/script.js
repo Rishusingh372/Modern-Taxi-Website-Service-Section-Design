@@ -16,15 +16,32 @@ hamburger.addEventListener('click', () => {
     navMenu.classList.toggle('active');
 });
 
-// Form submission
+// Form submission with MongoDB integration
 document.getElementById('contact-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    const name = this.querySelector('input[type="text"]').value;
-    const email = this.querySelector('input[type="email"]').value;
-    const message = this.querySelector('textarea').value;
-    console.log('Form submitted:', { name, email, message });
-    this.reset();
-    alert(`Thank you, ${name}! We will get back to you soon.`);
+
+    // Get form data
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    // Send data to the server
+    fetch('/submit-form', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message); // Show success message
+        document.getElementById('contact-form').reset(); // Clear the form
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting form');
+    });
 });
 
 // Scroll Animations
